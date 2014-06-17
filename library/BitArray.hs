@@ -14,46 +14,57 @@ import qualified NumericQQ
 -- You can construct bit arrays by wrapping numeric values:
 -- 
 -- >>> BitArray (7 :: Int8)
--- 00000111
+-- [qq|00000111|]
 -- 
 -- or directly from numeric literals:
 -- 
 -- >>> 7 :: BitArray Int8
--- 00000111
+-- [qq|00000111|]
 -- 
 -- or using a binary notation quasi-quoter, 
 -- assuming you have the @QuasiQuotes@ pragma turned on:
 -- 
 -- >>> [qq|0111|] :: BitArray Int8
--- 00000111
+-- [qq|00000111|]
 -- 
 -- @BitArray@ derives the 'Bits' instance from the base type,
 -- so it supports all the standard bitwise operations as well.
+-- 
+-- Note that this library does not support the 'Integer' type,
+-- since 'Integer' has no implementation of the 'bitSize' function,
+-- which this library heavily relies on.
+-- You will get a runtime exception if you use it with 'Integer'.
 newtype BitArray a = BitArray a
   deriving (Bounded, Enum, Eq, Integral, Data, Num, Ord, Real, Ix, Generic, 
             Typeable, Bits)
 
 -- | 
--- Produces a string of zeros and ones.
+-- Produces a literal of zeros and ones.
 -- 
 -- >>> show (BitArray (5 :: Int8))
--- "00000101"
+-- "[qq|00000101|]"
 instance (Bits a) => Show (BitArray a) where
-  show = fmap (\case True -> '1'; False -> '0') . reverse . toBoolList
+  show = wrap . toString
+    where
+      wrap = ("[qq|" ++) . (++ "|]")
 
 -- | 
--- Parses a string of zeros and ones.
+-- Parses a literal of zeros and ones.
 -- 
--- >>> read "1110" :: BitArray Int8
--- 00001110
+-- >>> read "[qq|1110|]" :: BitArray Int8
+-- [qq|00001110|]
 -- 
--- >>> unwrap (read "1110") :: Int
+-- >>> unwrap (read "[qq|1110|]") :: Int
 -- 14
 instance (Bits a, Num a) => Read (BitArray a) where
-  readsPrec = const $ ReadP.readP_to_S $ BitArray <$> Parser.bits
+  readsPrec = const $ ReadP.readP_to_S $ parser
+    where
+      parser = 
+        BitArray <$> ReadP.string "[qq|" *> Parser.bits <* ReadP.string "|]"
 
 instance (Bits a, Num a) => IsString (BitArray a) where
-  fromString = read
+  fromString = 
+    fromMaybe (error "Unparsable bit array string") . parseString
 
 -- * Constructors and converters
 -------------------------
@@ -67,12 +78,37 @@ instance (Bits a, Num a) => IsString (BitArray a) where
 -- 3
 -- 
 -- >>> [qq|011|] :: BitArray Int8
--- 00000011
+-- [qq|00000011|]
 qq = NumericQQ.bin
 
 -- | Unwrap the underlying value of a bit array.
 unwrap :: BitArray a -> a
 unwrap (BitArray a) = a
+
+-- ** Strings
+-------------------------
+
+-- |
+-- Convert into a binary notation string.
+-- 
+-- >>> toString (BitArray (5 :: Int8))
+-- "00000101"
+toString :: (Bits a) => BitArray a -> String
+toString = fmap (\case True -> '1'; False -> '0') . reverse . toBoolList
+
+-- |
+-- Parse a binary notation string.
+-- 
+-- >>> parseString "123" :: Maybe (BitArray Int8)
+-- Nothing
+-- 
+-- >>> parseString "101" :: Maybe (BitArray Int8)
+-- Just [qq|00000101|]
+parseString :: (Bits a, Num a) => String -> Maybe (BitArray a)
+parseString = fmap fst . listToMaybe . ReadP.readP_to_S Parser.bits
+
+-- ** Lists
+-------------------------
 
 -- | 
 -- Convert into a list of set bits.

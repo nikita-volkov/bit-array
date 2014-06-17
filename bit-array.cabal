@@ -7,8 +7,8 @@ synopsis:
 description:
   The library extends the numeric types with an array-like interface 
   over individual set bits.
-  It also provides the 'Read' and 'Show' instances which 
-  map to a string of zeros and ones.
+  It also provides an API for conversion to and 
+  from the binary representation strings.
 category:
   Data Structures, Bit Vectors, Pretty Printer
 homepage:
