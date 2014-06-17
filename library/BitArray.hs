@@ -141,7 +141,7 @@ toBoolList (BitArray w) = testBit w <$> [0 .. (pred . bitSize) w]
 -- The list must be ordered from least significant to most significant bit.
 {-# INLINABLE fromBoolList #-}
 fromBoolList :: (Bits a, Num a) => [Bool] -> BitArray a
-fromBoolList = fromList . fmap (bit . fst) . filter snd . zip [0..]
+fromBoolList = inline fromList . fmap (bit . fst) . filter snd . zip [0..]
 
 -- * Utils
 -------------------------
@@ -149,7 +149,7 @@ fromBoolList = fromList . fmap (bit . fst) . filter snd . zip [0..]
 -- | Map over the set bits.
 {-# INLINABLE map #-}
 map :: (Bits a, Num a, Bits b, Num b) => (a -> b) -> BitArray a -> BitArray b
-map f = fromList . fmap f . inline toList
+map f = inline fromList . fmap f . inline toList
 
 -- | Perform a right-associative fold over the set bits.
 {-# INLINABLE foldr #-}
