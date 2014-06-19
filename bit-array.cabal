@@ -8,7 +8,7 @@ description:
   The library extends the numeric types with an array-like interface 
   over individual set bits.
   It also provides an API for conversion to and 
-  from the binary representation strings.
+  from the binary notation.
 category:
   Data Structures, Bit Vectors, Pretty Printer
 homepage:
