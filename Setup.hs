@@ -3,7 +3,7 @@ import Data.Version ( showVersion )
 import Distribution.Package ( PackageName(PackageName), Package, PackageId, InstalledPackageId, packageVersion, packageName )
 import Distribution.PackageDescription ( PackageDescription(), TestSuite(..) )
 import Distribution.Simple ( defaultMainWithHooks, UserHooks(..), simpleUserHooks )
-import Distribution.Simple.Utils ( rewriteFile, createDirectoryIfMissingVerbose, copyFiles )
+import Distribution.Simple.Utils ( rewriteFile, createDirectoryIfMissingVerbose )
 import Distribution.Simple.BuildPaths ( autogenModulesDir )
 import Distribution.Simple.Setup ( BuildFlags(buildVerbosity), Flag(..), fromFlag, HaddockFlags(haddockDistPref))
 import Distribution.Simple.LocalBuildInfo ( withLibLBI, withTestLBI, LocalBuildInfo(), ComponentLocalBuildInfo(componentPackageDeps) )
@@ -17,7 +17,6 @@ main = defaultMainWithHooks simpleUserHooks
      generateBuildModule (fromFlag (buildVerbosity flags)) pkg lbi
      buildHook simpleUserHooks pkg lbi hooks flags
   , postHaddock = \args flags pkg lbi -> do
-     copyFiles normal (haddockOutputDir flags pkg) [("images","Hierarchy.png")]
      postHaddock simpleUserHooks args flags pkg lbi
   }
 
