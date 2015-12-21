@@ -1,7 +1,6 @@
 # For details on this setup see https://github.com/hvr/multi-ghc-travis
 
 env:
-  - GHCVER=7.6.3
   - GHCVER=7.8.2
   - GHCVER=7.10.2
 
