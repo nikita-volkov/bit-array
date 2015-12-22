@@ -1,7 +1,7 @@
 name:
   bit-array
 version:
-  0.1.0.1
+  0.1.1
 synopsis:
   A bit array (aka bitset, bitmap, bit vector) API for numeric types
 description:
