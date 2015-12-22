@@ -18,6 +18,6 @@ bitIndexes = do
       '1' -> return (return index)
       _   -> return empty
 
-bits :: (Bits a, Num a) => ReadP a
-bits = foldr (.|.) 0 . map bit <$> bitIndexes
+bits :: (FiniteBits a) => ReadP a
+bits = foldr (.|.) zeroBits . map bit <$> bitIndexes
 
