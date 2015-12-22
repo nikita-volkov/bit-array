@@ -1,8 +1,6 @@
 module BitArray.Prelude
 ( 
   module Exports,
-  bug,
-  bottom,
   bool,
 )
 where
@@ -50,20 +48,6 @@ import Data.IORef as Exports
 import Data.STRef as Exports
 import Control.Monad.ST as Exports
 import Debug.Trace as Exports hiding (traceM)
-
--- placeholders
--------------------------
-import Development.Placeholders as Exports
-
--- custom
--------------------------
-import qualified Debug.Trace.LocationTH
-
-bug = [e| $(Debug.Trace.LocationTH.failure) . (msg <>) |]
-  where
-    msg = "A \"bit-array\" package bug: " :: String
-
-bottom = [e| $bug "Bottom evaluated" |]
 
 bool :: a -> a -> Bool -> a
 bool f _ False = f

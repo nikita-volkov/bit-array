@@ -47,9 +47,6 @@ library
   exposed-modules:
     BitArray
   build-depends:
-    -- debugging:
-    loch-th == 0.2.*,
-    placeholders == 0.1.*,
     -- general:
     numeric-qq >= 0.1.3 && < 0.2,
     base >= 4.7 && < 5
